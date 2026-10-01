@@ -238,4 +238,18 @@ void gb_run_frame(gb_t *gb) {
 | Is the mode timing right? | `dmg-acid2` + `STAT` timing tests, then M09 |
 | Is anything at all happening? | `--trace` + serial output |
 
+## Sources
+
+* **Pan Docs:** *Rendering* (the mode/dot timing table and the mode-3 penalty
+  sources), *LCDC*, *STAT* (including the spurious STAT interrupt quirk),
+  *Palettes*, *OAM* (the 10-per-line limit and DMG object priority),
+  *Accessing VRAM and OAM*, *OAM DMA Transfer*, *Interrupt Sources*, and the
+  joypad and serial register pages.
+* **dmg-acid2** (MIT) is the oracle for everything in §4.2 and §4.3; its reference
+  image tells you *which* rule is broken, so read its README before "fixing"
+  anything. `mealybug-tearoom-tests` is the harder follow-up for mode-3 timing.
+* Oracles: `dmg-acid2`, blargg's `oam_bug` and `mem_timing`, mooneye's
+  `acceptance/ppu/` and `acceptance/oam_dma/`. Annotations:
+  [../reference/external-references.md](../reference/external-references.md).
+
 Next: **[05-audio.md](05-audio.md)** and **[06-verification-and-tooling.md](06-verification-and-tooling.md)**.

@@ -179,4 +179,13 @@ API contract, the tests, the harness, the build, and the hint ladders — not th
 implementations. If a lesson hands you code, it is infra (file loading, pixel
 dumping, test macros), never emulation logic.
 
+## Sources
+
+This document is orientation, not hardware: everything specific it claims is sourced
+in the document that owns the topic (see the matrix in
+[00-reading-path.md](00-reading-path.md) §0.3). The design it teaches — one state
+struct, one clock, all access through the bus — is an engineering choice, not a
+hardware fact. Annotated links to every primary source used by the course:
+[../reference/external-references.md](../reference/external-references.md).
+
 Next: **[02-cpu.md](02-cpu.md)** — the CPU is where the work is.

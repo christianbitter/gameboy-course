@@ -5,18 +5,36 @@ interface contract, the acceptance tests, the build, the hint ladders, and the
 milestone order. There are no solutions in here — that is the point.
 
 Target: the original **DMG** (Game Boy / Game Boy Pocket), in **C17**, on Windows
-with **MSYS2 UCRT64 gcc 15.2.0**, plus **Python 3.11** for tooling. CGB/double
-speed is an optional final milestone.
+with **MSYS2 UCRT64 gcc 15.2.0**, plus **Python 3.11** for tooling (any Python 3.8+
+works, and nothing needs `pip`). CGB/double speed is an optional final milestone.
+
+**Prerequisites are one file: [PREREQUISITES.md](PREREQUISITES.md).** It lists what
+you need now, what you need later, what is deliberately *not* needed (`make`,
+`cmake`, MSVC, any `pip` package, a commercial ROM), and how to verify the whole
+machine in one command.
 
 ## Start here
 
 ```
 cd gameboy-course
 
+python tools\check_env.py       # confirm the toolchain before trusting anything else
 .\gb\build.cmd                  # build gb\build\gbemu.exe + gbemu_tests.exe
 .\gb\build.cmd -Test m00        # 3 tests, green before you write any code
 .\gb\build.cmd -Test            # everything: 3 green, 42 red, 28 skipped right now
 ```
+
+**Using VS Code on Windows?** Open the `gameboy-course` folder itself as the
+workspace root. `.vscode/` ships eleven tasks (`Ctrl+Shift+B` to build,
+`Ctrl+Shift+P` -> "Tasks: Run Task" for the rest) and three gdb launch
+configurations. The gdb install and the IntelliSense notes are in
+[PREREQUISITES.md](PREREQUISITES.md).
+
+New to Game Boy hardware, or want to know exactly what to read and in what order?
+Start with **[docs/00-reading-path.md](docs/00-reading-path.md)**: it maps every topic
+to its course doc, its primary source and the test that settles it, lists the
+explain-back checks that tell you whether you actually learned it, and says which
+sources to clone for offline study.
 
 Then open **[lessons/M00-setup-and-harness.md](lessons/M00-setup-and-harness.md)**
 and work down **[TASKS.md](TASKS.md)**. Read theory only when the milestone you
@@ -89,7 +107,11 @@ question, H2 is a technique, H3 is the last step before the answer — never cod
 ```
 README.md                  this file
 TASKS.md                   the milestone checklist. Your todo list. Start here.
+PREREQUISITES.md           required / later / not-needed tools, VS Code setup, troubleshooting
+.vscode/                   VS Code tasks, debug configs and IntelliSense for this layout
 docs/
+  00-reading-path.md       how to learn this: reading order, topic -> source matrix,
+                           explain-back checks, schedules, what NOT to read
   01-orientation.md        what an emulator is, the architecture, the debug loop
   02-cpu.md                LR35902: registers, flags (full rules), DAA, interrupts
   03-memory-and-cartridge.md  memory map, boot ROM, header, MBCs, OAM DMA
@@ -117,6 +139,7 @@ gb/
                            red until implemented), t_m07..t_m12 (you write them)
 roms/README.md             where to get legal test ROMs and homebrew
 tools/opcode_table.py      generates the opcode map, and checks your C table against it
+tools/check_links.py       verifies that every relative link in the course resolves
 ```
 
 ## Given vs yours

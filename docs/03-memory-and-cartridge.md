@@ -221,5 +221,19 @@ during it. Implementation order:
   in the two places that need it (`cart_read` and the MBC register).
 * Allocating RAM from the header but reading `A000-BFFF` through the ROM table.
 
+## Sources
+
+* **Pan Docs:** *Memory Map* (the address map, echo RAM, the prohibited range),
+  *The Cartridge Header* (offsets and the checksum algorithm), *Power Up Sequence*
+  (what the boot ROM does and the post-hand-off state), *OAM DMA Transfer*,
+  *MBC1* / *MBC3* / *MBC5* (the `Cartridges` section), *MBC2*.
+* **gbctr** for the boot-ROM hand-off details and the DMG/`DMG0`/`MGB`/`SGB`/CGB
+  differences that explain why a post-boot value may look "wrong".
+* The verified post-boot table (including `DIV`, `LY` and the `DMG0` column) is in
+  [../reference/cheatsheet-flags-and-timing.md](../reference/cheatsheet-flags-and-timing.md).
+* Oracles: mooneye `acceptance/boot_hwio-dmgABCmgb` and `boot_regs-dmgABC` for the
+  post-boot state, `bits/unused_hwio-C` for unmapped I/O reads. Annotations:
+  [../reference/external-references.md](../reference/external-references.md).
+
 Next: **[04-ppu-and-peripherals.md](04-ppu-and-peripherals.md)** — 70224 cycles,
 and turning two bitplanes into a picture.

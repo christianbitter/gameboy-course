@@ -1,0 +1,161 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "1 build (debug)",
+            "detail": "gcc -g -O0 via gb/build.ps1, bypassing the PowerShell execution policy",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile", "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}\\gb\\build.ps1"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": ["$gcc"],
+            "presentation": { "reveal": "silent", "clear": true, "panel": "shared" }
+        },
+        {
+            "label": "2 build (release)",
+            "detail": "gcc -O2; use this for real-time play, never for debugging",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile", "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}\\gb\\build.ps1", "-Release"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "group": "build",
+            "problemMatcher": ["$gcc"],
+            "presentation": { "reveal": "silent", "clear": true, "panel": "shared" }
+        },
+        {
+            "label": "3 test: all",
+            "detail": "the full suite; read the counts, not the wall of red",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile", "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}\\gb\\build.ps1", "-Test"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "group": { "kind": "test", "isDefault": true },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "clear": true, "panel": "shared" }
+        },
+        {
+            "label": "4 test: milestone (prompt)",
+            "detail": "filter is a substring match: m00, m03, m03_alu, m07_",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile", "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}\\gb\\build.ps1", "-Test", "${input:testFilter}"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "group": "test",
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "clear": true, "panel": "shared" }
+        },
+        {
+            "label": "5 test: from scratch",
+            "detail": "delete gb/build and rebuild everything, then test",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile", "-ExecutionPolicy", "Bypass",
+                "-File", "${workspaceFolder}\\gb\\build.ps1", "-Clean", "-Test"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "group": "test",
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "clear": true, "panel": "shared" }
+        },
+        {
+            "label": "6 run ROM: serial to terminal",
+            "detail": "the blargg/mooneye workflow: the verdict arrives on stdout",
+            "type": "shell",
+            "command": "${workspaceFolder}\\gb\\build\\gbemu.exe",
+            "args": [
+                "--rom", "${input:romPath}",
+                "--serial", "-",
+                "--frames", "4000"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "clear": true, "panel": "dedicated" }
+        },
+        {
+            "label": "7 run ROM: 600 frames, dump frame + trace",
+            "detail": "writes gb/build/frame.bmp and gb/build/trace.txt",
+            "type": "shell",
+            "command": "${workspaceFolder}\\gb\\build\\gbemu.exe",
+            "args": [
+                "--rom", "${input:romPath}",
+                "--frames", "600",
+                "--dump-frame", "${workspaceFolder}\\gb\\build\\frame.bmp",
+                "--trace", "${workspaceFolder}\\gb\\build\\trace.txt"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "clear": true, "panel": "dedicated" }
+        },
+        {
+            "label": "8 check: prerequisites",
+            "type": "shell",
+            "command": "python",
+            "args": ["${workspaceFolder}\\tools\\check_env.py"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "clear": true, "panel": "shared" }
+        },
+        {
+            "label": "9 check: links",
+            "type": "shell",
+            "command": "python",
+            "args": ["${workspaceFolder}\\tools\\check_links.py"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "clear": true, "panel": "shared" }
+        },
+        {
+            "label": "10 check: opcodes vs your C table",
+            "detail": "reports base opcodes your src/opcodes.c does not mention yet",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "${workspaceFolder}\\tools\\opcode_table.py",
+                "--check", "${workspaceFolder}\\gb\\src\\opcodes.c"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "clear": true, "panel": "shared" }
+        },
+        {
+            "label": "11 generate: opcode map markdown",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "${workspaceFolder}\\tools\\opcode_table.py",
+                "--out", "${workspaceFolder}\\gb\\build\\opcodes.md"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "clear": true, "panel": "shared" }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "testFilter",
+            "type": "promptString",
+            "description": "test name substring (m00, m03, m03_alu, m07_)",
+            "default": "m00"
+        },
+        {
+            "id": "romPath",
+            "type": "promptString",
+            "description": "path to a .gb ROM, relative to the workspace root",
+            "default": "roms\\blargg\\cpu_instrs\\individual\\01-special.gb"
+        }
+    ]
+}

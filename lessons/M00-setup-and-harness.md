@@ -8,6 +8,7 @@
 
 - `docs/01-orientation.md` sections 1.1 (the bus is the spine), 1.5 (vertical slices), 1.6 (fail loudly), 1.7 (build the tracer first).
 - `docs/06-verification-and-tooling.md` - it owns the test runner, the serial-output mechanics and the test-ROM workflow. Read it before you run anything; do not paraphrase it into your own rules.
+- `PREREQUISITES.md` - the full required / later / not-needed tool list, and `python tools/check_env.py` to verify your machine in one command. Read it before you start changing anything about your environment.
 - `gb/README.md` and the repo `README.md` - the canonical build commands. They are repeated below; do not invent variants.
 - `gb/include/gb/common.h` - `u8/u16/u32`, `GB_FLAG_*`, `GB_TICKS_PER_FRAME`, `GB_INT_*`, `GB_UNIMPLEMENTED`.
 - `gb/include/gb/gb.h` - `struct gb_s`, `void gb_step(gb_t*)`, `void gb_run_frame(gb_t*)`, and the list of functions that are yours.
@@ -42,8 +43,8 @@ gb_destroy(gb);
 
 ## Work order
 
-1. `where.exe gcc`, `gcc -v`, `gcc -dumpmachine`, `python --version`. Expect MSYS2 UCRT64 gcc 15.2.0 and Python 3.11, and `x86_64-w64-mingw32` from the dump target. Paste the four outputs into `NOTES.md`.
-2. `.\gb\build.cmd -Clean` then `.\gb\build.cmd`. Expect `gb\build\gbemu.exe`. Run `.\gb\build\gbemu.exe --help` and confirm the CLI in `docs/01-orientation.md` (it is the fixed interface for the rest of the course).
+1. `python tools\check_env.py` - expect every REQUIRED item `[ OK ]` and a non-zero exit only for the optional ones. Then `where.exe gcc`, `gcc -v`, `gcc -dumpmachine`, `python --version`. Expect MSYS2 UCRT64 gcc 15.2.0 and Python 3.11, and `x86_64-w64-mingw32` from the dump target. Paste the outputs into `NOTES.md`.
+2. `.\gb\build.cmd -Clean` then `.\gb\build.cmd` (VS Code: `Ctrl+Shift+P` -> "Tasks: Run Task" -> `5 test: from scratch`). Expect `gb\build\gbemu.exe`. Run `.\gb\build\gbemu.exe --help` and confirm the CLI in `docs/01-orientation.md` (it is the fixed interface for the rest of the course).
 3. `.\gb\build.cmd -Test m00`. Expect exactly 3 tests selected, 3 PASS. If the runner reports a different number, stop and re-read your filter.
 4. `.\gb\build.cmd -Test` (everything). Record per-milestone pass/fail counts in `NOTES.md`. Expect `m01_`..`m06_` FAILED with `UNIMPLEMENTED:` messages and later milestones reported as skipped/`TODO`.
 5. Open `gb/tests/harness.h` and `gb/tests/test_main.c`. Answer in `NOTES.md`: how a test registers itself, what the filter matches (it is a SUBSTRING match, not a prefix), what `TEST_TODO` reports, and what happens to the process when `GB_UNIMPLEMENTED` fires under `-Test`.

@@ -37,15 +37,20 @@ tests/t_m07..t_m12      TEST_TODO stubs: YOU write these tests                 Y
 ## Build and test
 
 ```
-.\gb\build.ps1                  # build both binaries
-.\gb\build.ps1 -Test            # build and run everything
-.\gb\build.ps1 -Test m03        # only tests whose name contains m03
-.\gb\build.ps1 -Clean -Test     # from scratch
+.\gb\build.cmd                  # build both binaries
+.\gb\build.cmd -Test            # build and run everything
+.\gb\build.cmd -Test m03        # only tests whose name contains m03
+.\gb\build.cmd -Clean -Test     # from scratch
 ```
+
+`.\gb\build.cmd` is the entry point because many Windows machines block `.ps1` by
+execution policy; where scripts are allowed, `.\gb\build.ps1` is identical.
 `make` users (WSL/Linux/macOS): `make`, `make test`, `make test FILTER=m03`.
 
-If `gcc` is not on PATH the script looks in `C:\msys64\ucrt64\bin`. To add it
-permanently: `setx PATH "$env:PATH;C:\msys64\ucrt64\bin"` then reopen the shell.
+Check the toolchain first with `python tools\check_env.py`; the full
+required/optional/not-needed list is in `../PREREQUISITES.md`. If `gcc` is not on
+PATH the build script looks in `C:\msys64\ucrt64\bin`. To add it permanently:
+`setx PATH "$env:PATH;C:\msys64\ucrt64\bin"` then reopen the shell.
 
 ## How to read a failing run
 

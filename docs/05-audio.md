@@ -349,5 +349,21 @@ Do not implement the whole of 5.2 at once. Build a vertical slice you can hear.
 9. **Quirks**: extra length clock, sweep negate-overflow, zombie envelope, wave RAM
    corruption, noise divisor 0 -- in that order of pain.
 
-Next: **[06-timing.md](06-timing.md)** -- making the whole machine exact, which is also
-what the last `dmg_sound` sub-tests are really measuring.
+## Sources
+
+* **Pan Docs:** *Audio* (overview and the `NR52`/`NR51` traps), *Audio Registers*
+  (`NR10`-`NR52` and wave RAM, register by register, with the DMG read/write masks),
+  *Power Up Sequence* (the post-boot values of `FF10`-`FF26`, which `dmg_sound`
+  sub-test 01 reads back — the table is in
+  [../reference/cheatsheet-flags-and-timing.md](../reference/cheatsheet-flags-and-timing.md)).
+* **Oracles:** blargg's `dmg_sound` (12 sub-tests; 01-06 is the milestone gate, and
+  this document says which of the rest are timing-sensitive and why), plus
+  `--dump-audio` / `--wav` and an FFT for the frequency checks.
+* Annotated links: [../reference/external-references.md](../reference/external-references.md).
+* Honest gap: the exact wording of the sweep-negate and noise-divisor-0 quirks was
+  not verified against a fetched source here. Treat §5.9's quirk list as a starting
+  point and let `dmg_sound` 05/07 arbitrate.
+
+Next: **[06-verification-and-tooling.md](06-verification-and-tooling.md)** -- how you will
+know any of this is right, and the timing work the last `dmg_sound` sub-tests are really
+measuring.

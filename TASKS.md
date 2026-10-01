@@ -17,10 +17,12 @@ starting line, not a problem.
 
 ## Right now — your first session (~90 minutes)
 
+- [ ] Open the `gameboy-course` folder in VS Code, accept the recommended extensions, then `Ctrl+Shift+B` to build and `Ctrl+Shift+P` -> "Tasks: Run Task" -> `4 test: milestone (prompt)` to run a filter (details: `PREREQUISITES.md`)
+- [ ] `python tools\check_env.py` reports every REQUIRED prerequisite as `[ OK ]` (the list behind it: `PREREQUISITES.md`)
 - [ ] `.\gb\build.cmd` builds `gb\build\gbemu.exe` and `gb\build\gbemu_tests.exe`
 - [ ] `.\gb\build.cmd -Test m00` reports exactly 3 tests, 3 PASS, exit 0
 - [ ] `.\gb\build\gbemu.exe --help` prints the fixed CLI (`--rom --info --frames --max-cycles --dump-frame --ppm --serial --trace --no-boot-rom --headless`)
-- [ ] Read `README.md`, `docs/01-orientation.md`, `gb/README.md`
+- [ ] Read `PREREQUISITES.md`, `README.md`, `docs/00-reading-path.md`, `docs/01-orientation.md`, `gb/README.md`
 - [ ] `git init` + `.gitignore` (start from the template in M00's H3) + first commit
 - [ ] Create `NOTES.md` and paste in: toolchain versions, the memory map from `docs/03` §3.2, the `gb_t` component list, the `gb_step` call graph, the register-ownership table from `gb/include/gb/bus.h`
 - [ ] `.\gb\build.cmd -Test` and record the per-milestone counts in `NOTES.md`

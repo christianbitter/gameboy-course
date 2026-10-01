@@ -182,4 +182,18 @@ This finds exactly the bugs a hand-written table forgets: `SBC` with carry in,
 6. You can explain, without looking, why each of those tests would catch a bug
    your unit tests miss.
 
-Next: **[05-audio.md](05-audio.md)**.
+## Sources
+
+* **Test ROM repos** (all free, licences in the linked annotations): blargg's
+  `gb-test-roms`; gekkio's `mooneye-test-suite` (MIT) with prebuilt ROMs at
+  <https://gekkio.fi/files/mooneye-test-suite/>; mattcurrie's `dmg-acid2` (MIT) and
+  `mealybug-tearoom-tests`; SameBoy's and Gambatte's suites.
+* **Reference implementations** for the oracle hierarchy in §6.1: SameBoy
+  (open source, readable `Core/`), BGB, Emulicious, Gambatte.
+* Annotated links, licences, and the exact pass/fail protocol of each suite:
+  [../reference/external-references.md](../reference/external-references.md).
+* `docs/00-reading-path.md` §0.6 maps each failure symptom to the document that
+  explains it.
+
+Next: **[../TASKS.md](../TASKS.md)** for the milestone checklist, and the
+**[../reference/](../reference)** cheatsheets for the data you should not retype.

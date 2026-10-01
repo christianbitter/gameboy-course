@@ -1,0 +1,86 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug tests: all (needs gdb)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\gb\\build\\gbemu_tests.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/msys64/ucrt64/bin/gdb.exe",
+            "preLaunchTask": "1 build (debug)",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Debug tests: filtered (needs gdb)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\gb\\build\\gbemu_tests.exe",
+            "args": ["${input:testFilter}"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/msys64/ucrt64/bin/gdb.exe",
+            "preLaunchTask": "1 build (debug)",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Debug gbemu on a ROM (needs gdb)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\gb\\build\\gbemu.exe",
+            "args": [
+                "--rom", "${input:romPath}",
+                "--frames", "20000",
+                "--break-op", "40"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/msys64/ucrt64/bin/gdb.exe",
+            "preLaunchTask": "1 build (debug)",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "testFilter",
+            "type": "promptString",
+            "description": "test name substring (m00, m03, m03_alu, m07_)",
+            "default": "m00"
+        },
+        {
+            "id": "romPath",
+            "type": "promptString",
+            "description": "path to a .gb ROM, relative to the workspace root",
+            "default": "roms\\dmg-acid2.gb"
+        }
+    ]
+}

@@ -7,14 +7,14 @@
 ## Read first
 
 - `gb/include/gb/debug.h` - the provided tracer ring (`GB_TRACE_DEPTH` 256, `trace_entry_t`, `gb_trace_record`, `gb_trace_print_last`) and the `gb_disasm` signature you must replace.
-- `gb/src/debug.c` - the placeholder `gb_disasm` (it prints raw hex bytes and reads straight from `gb->cart.rom`) and the tracer that calls it with `e->text`, which is **28 bytes**.
+- `gb/src/debug.c` - the placeholder `gb_disasm` (it prints raw hex bytes and reads straight from `gb->cart.rom`) and the tracer that calls it with `e->text`, which is **32 bytes**.
 - `gb/src/gb.c` - where `gb_trace_record` is called (once per instruction, by `gb_step`), and the `total_ticks` accounting your save states must preserve.
 - `gb/include/gb/gb.h` - the whole `gb_t` you are serialising, and the provided host services `gb_write_bmp` / `gb_write_ppm` / `GB_SHADES`.
 - `gb/src/main.c` - the provided CLI. M11 is where `--save-state` / `--load-state` and the window appear; today `--headless` is the only mode.
 - `docs/06-verification-and-tooling.md` sections 6.2, 6.4 and 6.6 for the test conventions, the tracer, and the CLI contract.
 - `docs/01-orientation.md` 1.4 (determinism) and 1.7 (tracer) - this milestone is where those two pay off.
 - `docs/02-cpu.md` opcode tables: your disassembler is their executable form, so a decoding hole is a table hole.
-- `gb/tests/harness.h` for the fixture style. SDL2 via MSYS2 (`pacman -S mingw-w64-x86_64-SDL2`) or vcpkg; `ffmpeg` if you stay headless.
+- `gb/tests/harness.h` for the fixture style. SDL2 via MSYS2 (`pacman -S mingw-w64-ucrt-x86_64-SDL2` - the `ucrt64` prefix must match your gcc prefix, or vcpkg); `ffmpeg` if you stay headless. The full required/optional tool list is in `PREREQUISITES.md`; verify with `python tools/check_env.py`.
 
 ## Why this milestone exists
 

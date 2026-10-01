@@ -71,10 +71,37 @@ uninitialised on hardware.
 | `FF4A` WY | `00` | | `FF49` OBP1 | UNVERIFIED (uninitialised) |
 | `FF4B` WX | `00` | | | |
 
-`DIV` and `IF` are the two values that differ between sources depending on how
-many cycles the boot ROM ran: `m06_boot_without_bootrom` deliberately does not
-assert them. The nine values it does assert are AF, BC, DE, HL, SP, PC, IME,
-LCDC and IE.
+Three facts that table cannot express, all from the same source:
+
+* **`F` depends on the header checksum.** On DMG, `F` is Z=1, N=0, and **H and C are
+  both set unless the cartridge header checksum at `0x014D` is `0x00`**, in which case
+  both are clear (`F = 0x80`, `AF = 0x0180`). The `01B0` above assumes a non-zero
+  checksum, which every real cartridge and this course's fixtures have.
+* **`DIV = 0xAB` is the DMG/MGB column.** `DMG0` leaves `DIV = 0x18` and `LY = 0x91`.
+  If a note you find says `DIV = 0x18`, it is quoting the `DMG0` column, not contradicting
+  this one.
+* **`OBP0`/`OBP1` are genuinely uninitialised** ("most often `0x00` or `0xFF`", and
+  unreliable after a flashcart menu). Set them before the first sprite. Likewise WRAM
+  and HRAM are random on power-up; a zeroed buffer is a teaching simplification.
+
+The sound registers are also left in a defined state, and `dmg_sound` sub-test 01
+reads them back before the game writes anything:
+
+| Reg | `FF10` | `FF11` | `FF12` | `FF13` | `FF14` | `FF16` | `FF17` | `FF18` | `FF19` | `FF1A` | `FF1B` |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Value | `80` | `BF` | `F3` | `FF` | `BF` | `3F` | `00` | `FF` | `BF` | `7F` | `FF` |
+
+| Reg | `FF1C` | `FF1D` | `FF1E` | `FF20` | `FF21` | `FF22` | `FF23` | `FF24` | `FF25` | `FF26` | `FF46` |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Value | `9F` | `FF` | `BF` | `FF` | `00` | `00` | `BF` | `77` | `F3` | `F1` | `FF` |
+
+(`NR52` is `F1` on DMG/MGB and `F0` on SGB/SGB2. `FF46` reads `FF` on DMG and `00`
+on CGB.) The oracle for all of this is mooneye
+`acceptance/boot_hwio-dmgABCmgb`; Pan Docs itself warns that its post-boot table is
+"highly volatile".
+
+`m06_boot_without_bootrom` asserts only AF, BC, DE, HL, SP, PC, IME, LCDC and IE.
+It deliberately does not assert `DIV` or `IF`.
 
 ## CPU quick facts
 

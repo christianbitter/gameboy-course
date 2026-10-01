@@ -322,5 +322,22 @@ staring.
 | M05 | interrupts, `HALT`, timers, serial |
 | M09 | access-level cycle accuracy |
 
+## Sources
+
+* **Pan Docs:** *CPU Registers and Flags* (the A/F/B/C/D/E/H/L file and F's low
+  nibble), *CPU Instruction Set* (per-opcode flag columns and the illegal list),
+  *Interrupts* (IME semantics and the `EI` delay), *CPU Comparison with Z80* (what
+  not to copy).
+* **gbctr** (Game Boy: Complete Technical Reference), CPU chapter: per-instruction
+  M-cycle timing diagrams.
+* Cycle counts in this document were cross-checked against the two vendored
+  machine-readable tables in [../reference/tables/](../reference/tables) — gbctr's
+  `opcodes.toml` (MIT) and gb-opcodes' `Opcodes.json` (CC0). The `CB`-prefix
+  convention is stated explicitly in
+  [../reference/cheatsheet-flags-and-timing.md](../reference/cheatsheet-flags-and-timing.md).
+* Oracles: blargg's `cpu_instrs`, `instr_timing`, `halt_bug`; mooneye's
+  `acceptance/` suite. Full annotations:
+  [../reference/external-references.md](../reference/external-references.md).
+
 Next: **[03-memory-and-cartridge.md](03-memory-and-cartridge.md)** — the bus, the
 memory map, and how a cartridge lies to the CPU about how much ROM it has.
