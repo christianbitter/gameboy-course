@@ -1,0 +1,29 @@
+# build output
+gb/build/
+build/
+*.exe
+*.o
+*.obj
+*.dll
+
+# frames, traces, saves and audio dumps you generate
+*.bmp
+*.ppm
+*.png
+*.sav
+*.srm
+*.wav
+*.raw
+*.trace
+
+# ROMs: keep them out of the repo (copyright + size).
+# Note the trailing `*`: ignoring the directory itself would make the
+# `!roms/README.md` negation impossible (git never descends into an ignored dir).
+roms/*
+!roms/README.md
+
+# editors / OS noise
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
