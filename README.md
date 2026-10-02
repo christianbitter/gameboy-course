@@ -21,7 +21,7 @@ cd gameboy-course
 python tools\check_env.py       # confirm the toolchain before trusting anything else
 .\gb\build.cmd                  # build gb\build\gbemu.exe + gbemu_tests.exe
 .\gb\build.cmd -Test m00        # 3 tests, green before you write any code
-.\gb\build.cmd -Test            # everything: 3 green, 42 red, 28 skipped right now
+.\gb\build.cmd -Test            # everything: 3 green, 72 red, 2 skipped right now
 ```
 
 **Using VS Code on Windows?** Open the `gameboy-course` folder itself as the
@@ -36,9 +36,12 @@ to its course doc, its primary source and the test that settles it, lists the
 explain-back checks that tell you whether you actually learned it, and says which
 sources to clone for offline study.
 
-Then open **[lessons/M00-setup-and-harness.md](lessons/M00-setup-and-harness.md)**
-and work down **[TASKS.md](TASKS.md)**. Read theory only when the milestone you
-are on needs it.
+Then work **[LESSONS.md](LESSONS.md)** top to bottom. **L01** is
+[lessons/L01-the-feedback-loop.md](lessons/L01-the-feedback-loop.md). Every lesson
+is self-contained (all its theory is inside it), capped at 90 minutes, and ends
+with named tests going green. **[TASKS.md](TASKS.md)** is the checklist view;
+**[milestones/](milestones)** holds the longer-form briefs and hint ladders for
+when you want the bigger picture or you are stuck.
 
 > `.\gb\build.cmd` is the entry point because many Windows machines block `.ps1`
 > by execution policy. If your policy allows scripts, `.\gb\build.ps1` works
@@ -81,26 +84,45 @@ milestone cannot hide the next one's progress.
 
 ## Milestone map
 
-| # | Milestone | Lesson | Tests | External gate |
-| --- | --- | --- | --- | --- |
-| M00 | Toolchain, build, harness, architecture | [M00](lessons/M00-setup-and-harness.md) | 3 green | — |
-| M01 | Cartridge header + address decoder | [M01](lessons/M01-cartridge-and-bus.md) | 6 | `--info` matches a hexdump |
-| M02 | CPU skeleton: fetch/decode, first opcodes | [M02](lessons/M02-cpu-skeleton.md) | 6 | — |
-| M03 | 8-bit load matrix, ALU, flags, `DAA` | [M03](lessons/M03-8bit-core.md) | 10 | — |
-| M04 | Control flow, stack, the whole `CB` block | [M04](lessons/M04-control-flow-and-cb.md) | 7 | — |
-| M05 | Interrupts, `HALT`, timers, serial | [M05](lessons/M05-interrupts-timers-serial.md) | 8 | **blargg `cpu_instrs` -> `Passed`** |
-| M06 | Frame loop, PPU skeleton, joypad, boot skip | [M06](lessons/M06-first-frame-loop.md) | 5 | a real ROM runs 600 frames |
-| M07 | PPU: BG, window, sprites, STAT | [M07](lessons/M07-ppu.md) | you write 8 | **`dmg-acid2` renders the smiley** |
-| M08 | MBC1/2/3/5 banking, save RAM | [M08](lessons/M08-mbcs-and-saves.md) | you write 5 | a game keeps its save |
-| M09 | Access-level timing and quirks | [M09](lessons/M09-timing-accuracy.md) | you write 5 | **`instr_timing`, `mem_timing`** |
-| M10 | APU: four channels to WAV | [M10](lessons/M10-audio.md) | you write 5 | **blargg `dmg_sound` 01-06** |
-| M11 | Save states, disassembler, debugger, window | [M11](lessons/M11-polish-and-debugger.md) | you write 3 | `--save-state` round trip |
-| M12 | Stretch: CGB, or a Python differential fuzzer | [M12](lessons/M12-stretch-cgb.md) | optional | your own definition of done |
+The **lessons** ([LESSONS.md](LESSONS.md)) are the work: 36 self-contained
+90-minute units. The **milestones** below are the coarser arc they sit in - 3 to 6
+lessons each - and each has a brief in `milestones/` with the full deliverable
+contract, work order, trap list and hint ladder. Reach for a milestone when you
+want to see where a lesson sits, or when a lesson's "if it fails" section is not
+enough.
 
-Every lesson has the same shape: Goal, Read first, Why, Deliverable contract,
-Work order, Acceptance tests, Common traps, a three-tier hint ladder, Done when,
-Stretch, Commit. **The hint ladder is the answer key's replacement**: H1 is a
-question, H2 is a technique, H3 is the last step before the answer — never code.
+| # | Milestone | Milestone brief | Tests in the suite | External gate |
+| --- | --- | --- | --- | --- |
+| M00 | Toolchain, build, harness, architecture | [M00](milestones/M00-setup-and-harness.md) | 3 | — |
+| M01 | Cartridge header + address decoder | [M01](milestones/M01-cartridge-and-bus.md) | 6 | `--info` matches a hexdump |
+| M02 | CPU skeleton: fetch/decode, first opcodes | [M02](milestones/M02-cpu-skeleton.md) | 6 | — |
+| M03 | 8-bit load matrix, ALU, flags, `DAA` | [M03](milestones/M03-8bit-core.md) | 11 | — |
+| M04 | Control flow, stack, the whole `CB` block | [M04](milestones/M04-control-flow-and-cb.md) | 7 | — |
+| M05 | Interrupts, `HALT`, timers, serial | [M05](milestones/M05-interrupts-timers-serial.md) | 9 | **blargg `cpu_instrs` -> `Passed`** |
+| M06 | Frame loop, PPU skeleton, joypad, boot skip | [M06](milestones/M06-first-frame-loop.md) | 5 | a real ROM runs 600 frames |
+| M07 | PPU: BG, window, sprites, STAT | [M07](milestones/M07-ppu.md) | 10 | **`dmg-acid2` renders the smiley** |
+| M08 | MBC1/2/3/5 banking, save RAM | [M08](milestones/M08-mbcs-and-saves.md) | 5 | a game keeps its save |
+| M09 | Access-level timing and quirks | [M09](milestones/M09-timing-accuracy.md) | 5 | **`instr_timing`, `mem_timing`** |
+| M10 | APU: four channels to WAV | [M10](milestones/M10-audio.md) | 5 | **blargg `dmg_sound` 01-06** |
+| M11 | Save states, disassembler, debugger, window | [M11](milestones/M11-polish-and-debugger.md) | 3 | `--save-state` round trip |
+| M12 | Stretch: CGB, or a Python differential fuzzer | [M12](milestones/M12-stretch-cgb.md) | 2 stubs | your own definition of done |
+
+The briefs in [milestones/](milestones) are **planning documents** kept for reference:
+longer-form work orders with trap lists and hint ladders, written before the course was
+restructured into lessons. The path to follow is the 36 lessons in
+**[LESSONS.md](LESSONS.md)**; the table above maps each archived brief to the milestone
+number it used and to the tests that now cover it (75 real tests, 2 stubs — sum the
+column to check).
+
+A **lesson** has the same eight markers every time: **Time**, *Tests that must go green*,
+the "What matters for the code you are about to write" highlight, and then the numbered
+sections **1. Read this**, **2. Your task**, **3. Prove it**, **4. If it fails**,
+**5. Done when**, plus an optional **6. Optional**. All of a lesson's reading is inside
+the lesson, and none of them exceeds 90 minutes. An **archived milestone brief** has the
+older shape (Goal, Read first, Why, Deliverable contract, Work order, Acceptance tests,
+Common traps, a three-tier hint ladder, Done when, Stretch, Commit) and is where the hint
+ladders live: **the hint ladder is the answer key's replacement** — H1 is a question, H2 is
+a technique, H3 is the last step before the answer, never code.
 
 ## Repository map
 
@@ -118,8 +140,10 @@ docs/
   04-ppu-and-peripherals.md   modes, timing, tiles, window, sprites, joypad, serial
   05-audio.md              the APU: channels, frame sequencer, mixing
   06-verification-and-tooling.md  oracles, test ROMs, tracing, symptom -> cause
-lessons/
-  M00..M12                 the milestone briefs (workflow, not theory)
+LESSONS.md                 THE WORK: the 90-minute lesson ladder. Start here.
+lessons/                   L01..L36, self-contained 90-minute lessons
+milestones/                M00..M12 briefs: contracts, work orders, trap lists,
+                           hint ladders. Planning documents, not lessons.
 reference/
   cheatsheet-opcode-map.md         all 512 opcodes, cycles, illegal list
   cheatsheet-flags-and-timing.md   flag rules, constants, post-boot state

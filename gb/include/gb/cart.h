@@ -31,6 +31,10 @@ typedef struct {
     u8  ram_size_code;      /* header 0x0149                               */
     bool battery;           /* header says RAM is battery-backed           */
     bool has_rtc;
+    bool cgb_capable;       /* header 0x0143 bit 7: the ROM knows about CGB.
+                             * 0x80 means "CGB-enhanced" (runs on both), 0xC0
+                             * means "CGB only" (a DMG must refuse it), 0x00
+                             * means DMG-only. Optional stretch, L36. */
 
     /* MBC latches. Nothing here is stored in ROM; these change which bytes
      * appear at 0x4000-0x7FFF and 0xA000-BFFF. */
@@ -57,16 +61,22 @@ typedef struct {
  * Signatures you must implement (src/cart.c):
  *
  * cart_load: takes the whole .gb file, validates loosely, parses the header,
- *            allocates rom/ram, loads <path>.sav if present. Returns false and
- *            prints a reason on a fatal problem (e.g. the file is too small or
- *            the declared ROM size is nonsense). Never reject a ROM over the
- *            Nintendo logo or the header checksum - report those instead.
+ *            allocates rom/ram, derives <path>.sav into gb->save_path, and loads
+ *            it if it already exists. Returns false and prints a reason on a fatal
+ *            problem (e.g. the file is too small, or the declared ROM size is
+ *            nonsense). Never reject a ROM over the Nintendo logo or the header
+ *            checksum - report those instead.
+ *
+ *            The save path belongs here rather than in the caller, because the save
+ *            must be loaded during cart_load, before the ROM runs: a game checks its
+ *            own magic bytes on the first read and treats their absence as a new
+ *            save. cart_save() then writes gb->save_path.
  */
 bool cart_load (gb_t *gb, const u8 *data, size_t size, const char *path);
 void cart_unload(gb_t *gb);
 u8   cart_read (gb_t *gb, u16 addr);
 void cart_write(gb_t *gb, u16 addr, u8 value);
-void cart_save (gb_t *gb);          /* write <path>.sav if dirty          */
+void cart_save (gb_t *gb);          /* write gb->save_path if dirty        */
 
 /* Provided (src/cart.c): the post-load report used by --info, plus the
  * header data tables so you do not have to retype them. */

@@ -43,6 +43,17 @@ struct gb_s {
     bool fatal;         /* set by cpu_fatal(); the machine stops          */
     bool headless;      /* no window: run flat out                        */
 
+    /* CGB mode (optional stretch, L36). `cgb` is the MACHINE's mode, decided at
+     * load time from the cartridge header (0x0143 bit 7) - do not set it while
+     * running. It must stay false for a DMG cartridge: on a DMG the registers
+     * FF4D and FF68-FF6B do not exist and the palette RAM is not there.
+     * The tests set it directly so that your header detection can look however
+     * you like. */
+    bool cgb;
+    u8   key1;          /* FF4D: bit 7 = current speed, bit 0 = arm switch.
+                         * Writing 0x01 arms; the next STOP performs the switch.
+                         * Only live when cgb is true. */
+
     u64 total_ticks;    /* master clock ticks since reset                 */
     u64 frame_count;
 

@@ -241,3 +241,44 @@ TEST(m05_serial_emits_byte)
     fclose(f);
     t_free(gb);
 }
+
+TEST(m05_halt_bug_double_fetch)
+{
+    /*
+     * The other half of the halt bug, and the part m05_halt_bug deliberately leaves
+     * to L31: with IME = 0 and an interrupt already pending, HALT does not halt AND
+     * the next opcode fetch does not advance PC, so the byte after the HALT is read
+     * twice. With a one-byte instruction after HALT that means it EXECUTES twice,
+     * which is the observable:
+     *
+     *   0x0100: 76        HALT
+     *   0x0101: 3C        INC A     <- executed twice
+     *   0x0102: 00        NOP
+     *
+     * After three cpu_step calls A must be 2, not 1.
+     */
+    const u8 prog[] = { 0x76, 0x3C, 0x00 };
+    gb_t *gb = t_machine(prog, sizeof prog);
+    TEST_ASSERT(gb != NULL, "cart_load() failed");
+
+    gb->cpu.pc = 0x0100;
+    gb->cpu.sp = 0xFFFE;
+    gb->cpu.ime = false;                  /* the whole point */
+    GB_IE(gb) = GB_INT_VBLANK;
+    GB_IF(gb) = GB_INT_VBLANK;            /* pending while IME == 0 */
+
+    cpu_step(gb);                         /* HALT: does not halt, arms the bug */
+    TEST_ASSERT(!gb->cpu.halted, "HALT must not halt when a request is pending");
+    TEST_EQ(gb->cpu.pc, 0x0101);
+
+    cpu_step(gb);                         /* first INC A */
+    cpu_step(gb);                         /* the same byte again */
+
+    TEST_ASSERT(gb->cpu.a == 2,
+                "the halt bug must make the byte after HALT execute twice, so two "
+                "INC A steps give A=2; got A=%u (PC=0x%04X)",
+                (unsigned)gb->cpu.a, gb->cpu.pc);
+    TEST_EQ(gb->cpu.pc, 0x0102);
+
+    t_free(gb);
+}

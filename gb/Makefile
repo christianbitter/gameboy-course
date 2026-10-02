@@ -11,12 +11,24 @@ SRC         := $(wildcard src/*.c)
 SRC_NO_MAIN := $(filter-out src/main.c,$(SRC))
 TEST_SRC    := $(wildcard tests/*.c)
 
+# Optional SDL2 window (L34). GB_WITH_SDL is defined for the EMULATOR ONLY: the test
+# binary never defines it, so src/window.c compiles to an empty translation unit there
+# and the suite stays free of any display dependency. Install with
+#   pacman -S mingw-w64-ucrt-x86_64-SDL2
+SDL_CFLAGS := $(shell pkg-config --cflags sdl2 2>/dev/null)
+SDL_LIBS   := $(shell pkg-config --libs sdl2 2>/dev/null)
+ifneq ($(strip $(SDL_LIBS)),)
+SDL_FLAGS  := -DGB_WITH_SDL $(SDL_CFLAGS)
+else
+SDL_FLAGS  :=
+endif
+
 .PHONY: all test clean run
 
 all: $(BUILD)/gbemu.exe
 
 $(BUILD)/gbemu.exe: $(SRC) | $(BUILD)
-	$(CC) $(CFLAGS) $(INC) -o $@ $(SRC)
+	$(CC) $(CFLAGS) $(INC) $(SDL_FLAGS) -o $@ $(SRC) $(SDL_LIBS)
 
 $(BUILD)/gbemu_tests.exe: $(SRC_NO_MAIN) $(TEST_SRC) | $(BUILD)
 	$(CC) $(CFLAGS) $(INC) -o $@ $(SRC_NO_MAIN) $(TEST_SRC)

@@ -11,7 +11,7 @@ them, and between this repo and the primary sources the whole field uses.
 | You have, offline | Size | What it is |
 | --- | --- | --- |
 | `docs/01-06` | ~1,300 lines | Self-contained theory: orientation, CPU, bus/cartridge, PPU/peripherals, APU, verification |
-| `lessons/M00-M12` | ~1,400 lines | The briefs: contracts, work order, traps, hint ladders |
+| `milestones/M00-M12` | ~1,400 lines | The briefs: contracts, work order, traps, hint ladders |
 | `reference/cheatsheet-*.md` | ~270 lines | Opcode map, flag rules, post-boot state, I/O register table |
 | `reference/glossary.md` | ~80 lines | 64 terms, concrete, no circular definitions |
 | `reference/external-references.md` | ~250 lines | Verified links with one-line annotations, grouped by purpose |
@@ -166,5 +166,5 @@ milestone ends with a command whose output you can read, and no milestone can be
 faked.
 
 Next: **[01-orientation.md](01-orientation.md)** — or go straight to
-**[../lessons/M00-setup-and-harness.md](../lessons/M00-setup-and-harness.md)** if
+**[../milestones/M00-setup-and-harness.md](../milestones/M00-setup-and-harness.md)** if
 you would rather start building.

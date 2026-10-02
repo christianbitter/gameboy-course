@@ -16,13 +16,22 @@ typedef struct {
     const char *name;
 } alu_case_t;
 
-/* OP A,B  - result lands in A. */
+/*
+ * OP A,B - result lands in A.
+ *
+ * The immediate ALU forms are 0xC6/0xCE/0xD6/0xDE/0xE6/0xEE/0xF6/0xFE, i.e.
+ * exactly the opcodes where (op & 0xC7) == 0xC6. Those take their operand from
+ * the byte AFTER the opcode, so for them the program is two bytes long and `b`
+ * plays the role of the immediate. Getting this length wrong makes a CORRECT
+ * implementation fail, which is the worst possible bug in a test fixture.
+ */
 static void run_a_case(const alu_case_t *tc)
 {
     cpu_t init = t_cpu_init((u16)((tc->a << 8) | (tc->f & 0xF0u)),
                             (u16)(tc->b << 8), 0, 0, 0xFFFE);
-    const u8 bytes[1] = { tc->op };
-    gb_t *gb = t_exec(bytes, 1, &init);
+    const bool immediate = ((tc->op & 0xC7u) == 0xC6u);
+    const u8 bytes[2] = { tc->op, tc->b };
+    gb_t *gb = t_exec(bytes, immediate ? 2 : 1, &init);
     TEST_ASSERT(gb != NULL, "cart_load() failed for %s", tc->name);
     TEST_ASSERT(gb->cpu.a == tc->want_a && gb->cpu.f == tc->want_f,
                 "%s: A=0x%02X (want 0x%02X)  F=0x%02X (want 0x%02X)",
@@ -59,21 +68,28 @@ TEST(m03_alu_add_flags)
     for (size_t i = 0; i < GB_ARRAY_LEN(cases); i++) run_a_case(&cases[i]);
 }
 
-TEST(m03_alu_adc_sbc_flags)
+/* Split by flag family so that each lesson gates on its own rule:
+ * ADD/ADC is L08 (carry out), SUB/SBC/CP is L09 (borrow). */
+TEST(m03_alu_adc_flags)
 {
-    static const alu_case_t adc[] = {
+    static const alu_case_t cases[] = {
         { 0x88, 0x0F, 0x00, 0x10, 0x10, 0x20, "ADC A,B 0F+00+C -> H, C cleared" },
         { 0x88, 0xFF, 0x00, 0x10, 0x00, 0xB0, "ADC A,B FF+00+C -> ZHC" },
         { 0x88, 0x10, 0x20, 0x10, 0x31, 0x00, "ADC A,B 10+20+C -> none" },
+        { 0xCE, 0x0F, 0x01, 0x10, 0x11, 0x20, "ADC A,d8 immediate form" },
     };
-    for (size_t i = 0; i < GB_ARRAY_LEN(adc); i++) run_a_case(&adc[i]);
+    for (size_t i = 0; i < GB_ARRAY_LEN(cases); i++) run_a_case(&cases[i]);
+}
 
-    static const alu_case_t sbc[] = {
+TEST(m03_alu_sbc_flags)
+{
+    static const alu_case_t cases[] = {
         { 0x98, 0x10, 0x01, 0x10, 0x0E, 0x60, "SBC A,B 10-01-C -> H only" },
         { 0x98, 0x00, 0x00, 0x10, 0xFF, 0x70, "SBC A,B 00-00-C -> NHC" },
         { 0x98, 0x05, 0x02, 0x00, 0x03, 0x40, "SBC A,B 05-02 -> N" },
+        { 0xDE, 0x10, 0x01, 0x10, 0x0E, 0x60, "SBC A,d8 immediate form" },
     };
-    for (size_t i = 0; i < GB_ARRAY_LEN(sbc); i++) run_a_case(&sbc[i]);
+    for (size_t i = 0; i < GB_ARRAY_LEN(cases); i++) run_a_case(&cases[i]);
 }
 
 TEST(m03_alu_sub_flags)

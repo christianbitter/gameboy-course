@@ -48,7 +48,7 @@ pacman -S mingw-w64-ucrt-x86_64-gcc
 There are three MSYS2 environments (`msys`, `mingw64`, `ucrt64`) whose binaries are
 **not** interchangeable. Use `ucrt64` for everything. If you later mix an SDL2 built
 for `mingw64` with a `ucrt64` gcc you get link errors at best and a program that
-starts and misbehaves at worst — see M11.
+starts and misbehaves at worst — see L34.
 
 ## VS Code on Windows (already configured)
 
@@ -130,11 +130,11 @@ associates `.gb`/`.sav` with the hex editor and hides `build/` from the explorer
 
 | Tool | Needed at | Why | Install |
 | --- | --- | --- | --- |
-| **SDL2** | M11 | the interactive window. Until then the front end is BMP/PPM dumps, which is deliberate: the PPU is verified against a file, not against your eyes. | `pacman -S mingw-w64-ucrt-x86_64-SDL2` |
-| **ffmpeg** | M10/M11 | WAV spectrum plots, and turning frame dumps into a video you can watch. | `winget install Gyan.FFmpeg` |
+| **SDL2** | L34 | the interactive window. Until then the front end is BMP/PPM dumps, which is deliberate: the PPU is verified against a file, not against your eyes. | `pacman -S mingw-w64-ucrt-x86_64-SDL2` |
+| **ffmpeg** | L35-L36 | WAV spectrum plots, and turning frame dumps into a video you can watch. | `winget install Gyan.FFmpeg` |
 | **gdb** | any | sometimes faster than the tracer; the tracer is still the primary tool. | `pacman -S mingw-w64-ucrt-x86_64-gdb` |
 | **RGBDS** | optional | assembler, if you want to write your own test ROMs instead of downloading them. | `pacman -S mingw-w64-ucrt-x86_64-rgbds` |
-| **A reference emulator** (BGB, SameBoy, Emulicious) | M07 onward | the practical oracle for "my ROM does X, yours does Y". `docs/06` §6.1 puts it third in the oracle hierarchy, after hardware and test ROMs. | see `reference/external-references.md` |
+| **A reference emulator** (BGB, SameBoy, Emulicious) | L20 onward | the practical oracle for "my ROM does X, yours does Y". `docs/06` §6.1 puts it third in the oracle hierarchy, after hardware and test ROMs. | see `reference/external-references.md` |
 
 ## Explicitly NOT needed
 
@@ -185,12 +185,12 @@ associates `.gb`/`.sav` with the hex editor and hides `build/` from the explorer
 [ -- ] optional make (optional)       not installed - use gb\build.cmd instead
 [ -- ] optional cmake (optional)      not needed - the course ships no CMake files
 [ OK ] optional ffmpeg (optional)     present
-[ -- ] optional SDL2 (optional, M11)  not installed - needed only for the windowed front end
+[ -- ] optional SDL2 (optional, L34)  not installed - needed only for the windowed front end
 [ -- ] optional gdb (optional)        not installed
 ```
 
 Optional gaps are fine and intentional: `make`/`cmake` are never called, SDL2 is not
-needed until M11, and the tracer replaces gdb for 95% of debugging.
+needed until L34, and the tracer replaces gdb for 95% of debugging.
 
 ## Why there is no Dev Container or installer script
 

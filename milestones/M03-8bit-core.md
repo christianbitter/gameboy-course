@@ -55,7 +55,7 @@ Worked vectors the tests will hit (derive the rest from docs/02 section 2.4 - do
 1. Write the incomplete `0x40-0x7F` handler as one loop: decode `dst` and `src`, call `cpu_read_r8` then `cpu_write_r8`, add the `(HL)` penalty, and leave `0x76` as an explicit `GB_UNIMPLEMENTED("HALT (M05)")`. Run `.\gb\build.cmd -Test m03_ld_r_r_matrix`.
 2. `m03_hl_indirect_cycles`: assert the four shapes - `LD r,(HL)` 8, `LD (HL),r` 8, `LD r,r'` 4, `LD (HL),d8` 12. Fix the cycle arithmetic before adding instructions.
 3. The eight ALU ops against a register operand (`0x80-0xBF`) via the same loop, using one shared ALU helper. Run `m03_alu_add_flags`, `m03_alu_sub_flags`, `m03_alu_logic_flags`.
-4. Carry-in forms: `ADC`/`SBC` must consume the incoming C flag in *both* the result and the H computation. Run `m03_alu_adc_sbc_flags`.
+4. Carry-in forms: `ADC`/`SBC` must consume the incoming C flag in *both* the result and the H computation. Run `m03_alu_adc_flags` / `m03_alu_sbc_flags`.
 5. `CP`: flags of `SUB`, but A is not written. Run `m03_alu_cp_no_write`. If this passes while `SUB` passes, your helper's "write back" decision is explicit, which is what you want.
 6. The `d8` forms (`0xC6`..`0xFE`): fetch one byte, then the same helpers. 8 T-cycles each.
 7. `INC`/`DEC` on registers, then on `(HL)` at 12 T-cycles. C must be untouched by both. Run `m03_inc_dec_flags`.
@@ -72,14 +72,14 @@ Worked vectors the tests will hit (derive the rest from docs/02 section 2.4 - do
 .\gb\build.cmd -Test m0             # M00-M06 prefix: regression sweep
 ```
 
-Pass criterion: `m03_ld_r_r_matrix`, `m03_alu_add_flags`, `m03_alu_sub_flags`, `m03_alu_adc_sbc_flags`, `m03_alu_logic_flags`, `m03_alu_cp_no_write`, `m03_inc_dec_flags`, `m03_daa`, `m03_rotates_a`, `m03_hl_indirect_cycles` all PASS, with the tables exercising every `r8` index, both `(HL)` positions, and the flag cells listed in docs/02 section 2.4.
+Pass criterion: `m03_ld_r_r_matrix`, `m03_alu_add_flags`, `m03_alu_sub_flags`, `m03_alu_adc_flags` / `m03_alu_sbc_flags`, `m03_alu_logic_flags`, `m03_alu_cp_no_write`, `m03_inc_dec_flags`, `m03_daa`, `m03_rotates_a`, `m03_hl_indirect_cycles` all PASS, with the tables exercising every `r8` index, both `(HL)` positions, and the flag cells listed in docs/02 section 2.4.
 
 ## Common traps
 
 - `AND` sets H = 1. Symptom: only `m03_alu_logic_flags` fails, on the H bit. Cause: "logic ops clear N, H, C" is true for XOR and OR and false for AND; the half-carry exists for BCD correction. Detect: assert `F == 0xA0` for `AND` producing zero, `0x80` for `OR`/`XOR` producing zero.
 - `CP` writing A. Symptom: `m03_alu_cp_no_write` fails; games that compare-then-use-A branch wrongly. Cause: reusing the `SUB` code path including its store, or storing the truncated result before the flags are computed. Detect: `assert(a_before == a_after)` in the test, plus a flag-only assertion.
 - Half-borrow computed as a carry. Symptom: `SUB`/`SBC`/`CP` fail on H only. Cause: `(a & 0xF) + (n & 0xF) > 0xF` instead of `(a & 0xF) < (n & 0xF)`. Detect: `SUB B` with A=`0x00`, B=`0x01` must set H (borrow out of bit 3) and C, not clear them.
-- `ADC`/`SBC` ignoring the carry in the H/C rule. Symptom: `m03_alu_adc_sbc_flags` fails only for `carry_in == 1` vectors. Cause: result computed with the carry but flags computed without, or vice versa. Detect: the test's carry-in variants; make sure both operands of the H rule include the carry.
+- `ADC`/`SBC` ignoring the carry in the H/C rule. Symptom: `m03_alu_adc_flags` / `m03_alu_sbc_flags` fails only for `carry_in == 1` vectors. Cause: result computed with the carry but flags computed without, or vice versa. Detect: the test's carry-in variants; make sure both operands of the H rule include the carry.
 - `INC`/`DEC` clobbering C. Symptom: a loop that uses `INC` inside a `cp`-carry chain hangs or exits late. Cause: calling the shared ALU helper which necessarily writes C. Detect: `m03_inc_dec_flags` asserts C unchanged for all eight registers.
 - `DAA` corrections and their order. Symptom A: `0x9A -> 0x06` instead of `0x00` (transposed corrections). Symptom B: corrections are right but `0x9A` still fails. Cause A: using `0x06` for the high nibble; the high correction is `0x60` and the low is `0x06`. Cause B: testing `(A & 0x0F) > 0x09` against the original A instead of A **after** the high-nibble correction - the second test must see the corrected value. Detect: the five vectors in docs/02 section 2.4, in particular `0x9A -> 0x00`, `0xFF` (N=1, both corrections) and `0x2D` (N=1, H=1).
 - Flag bit positions swapped. Symptom: every ALU test fails on H and C in a mirrored way (`H` set where `C` should be). Cause: the name row of the flag table in `docs/02-cpu.md` section 2.1 labels bit 5 as `C`; the values and `gb/include/gb/common.h` are correct: **H = `0x20`, C = `0x10`**. Detect: print `F` as two hex digits and compare against the expected value in the test table; a mirror image means you used the doc's name row.

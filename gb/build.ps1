@@ -72,11 +72,33 @@ $srcNoMain = @($srcAll | Where-Object { (Split-Path $_ -Leaf) -ne 'main.c' })
 $testSrc   = @(Get-ChildItem -Path (Join-Path $Root 'tests') -Filter '*.c' |
                ForEach-Object { $_.FullName })
 
+# ---- SDL2, optional (the windowed frontend, L34) ---------------------------
+# GB_WITH_SDL is defined for the EMULATOR ONLY. The test binary never defines it, so
+# src/window.c compiles to nothing there and the suite stays free of any display
+# dependency. Install with:  pacman -S mingw-w64-ucrt-x86_64-SDL2
+$sdlCandidates = @()
+if ($env:MSYS2_ROOT) { $sdlCandidates += (Join-Path $env:MSYS2_ROOT 'ucrt64') }
+$sdlCandidates += @('C:\msys64\ucrt64', (Join-Path $env:USERPROFILE 'msys64\ucrt64'))
+$sdlRoot = $sdlCandidates |
+           Where-Object { Test-Path (Join-Path $_ 'include\SDL2\SDL.h') } |
+           Select-Object -First 1
+
+$sdlFlags = @()
+if ($sdlRoot) {
+    $sdlFlags = @('-DGB_WITH_SDL',
+                  "-I$(Join-Path $sdlRoot 'include\SDL2')",
+                  "-L$(Join-Path $sdlRoot 'lib')",
+                  '-lmingw32', '-lSDL2main', '-lSDL2')
+    Write-Host "SDL2: found at $sdlRoot - the window frontend will be built"
+} else {
+    Write-Host 'SDL2: not found - building headless only (see PREREQUISITES.md)'
+}
+
 $gbemu = Join-Path $Build 'gbemu.exe'
 $tests = Join-Path $Build 'gbemu_tests.exe'
 
 Invoke-Compiler -What 'building gbemu.exe' `
-    -CompilerArgs (@('-o', $gbemu) + $srcAll + $cflags)
+    -CompilerArgs (@('-o', $gbemu) + $srcAll + $cflags + $sdlFlags)
 
 Invoke-Compiler -What 'building gbemu_tests.exe' `
     -CompilerArgs (@('-o', $tests) + $srcNoMain + $testSrc + $cflags)

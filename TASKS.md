@@ -2,13 +2,15 @@
 
 Rules for using this file:
 
-* One milestone at a time, in order. The milestones are cumulative: `m03_*`
-  cannot pass before `m01_*` does, because every CPU test loads a cartridge.
+* **The lessons are the work.** Each is self-contained, capped at 90 minutes, and
+  ends with named tests going green. The ladder is `LESSONS.md`.
+* This file is the checklist view: the same work seen from a milestone away. The
+  milestone items are phase gates; the lesson is what you actually do today.
 * Every item names an exact command. Run it before ticking the box.
 * **A milestone is done when its tests are green *and* its gate passes.** The gate
   is what makes it true; the tests are what make it fast.
 * When something is red, tick nothing and fix it. Never "come back to it in M09".
-* Commit at every green milestone. Suggested messages are in each lesson.
+* Commit at every green lesson. Suggested messages are in each milestone brief.
 
 Current state of the suite: `3 passed, 42 failed, 28 skipped` — that is the
 starting line, not a problem.
@@ -23,11 +25,11 @@ starting line, not a problem.
 - [ ] `.\gb\build.cmd -Test m00` reports exactly 3 tests, 3 PASS, exit 0
 - [ ] `.\gb\build\gbemu.exe --help` prints the fixed CLI (`--rom --info --frames --max-cycles --dump-frame --ppm --serial --trace --no-boot-rom --headless`)
 - [ ] Read `PREREQUISITES.md`, `README.md`, `docs/00-reading-path.md`, `docs/01-orientation.md`, `gb/README.md`
-- [ ] `git init` + `.gitignore` (start from the template in M00's H3) + first commit
+- [ ] `git init` + `.gitignore` (template in `milestones/M00-setup-and-harness.md` H3) + first commit
 - [ ] Create `NOTES.md` and paste in: toolchain versions, the memory map from `docs/03` §3.2, the `gb_t` component list, the `gb_step` call graph, the register-ownership table from `gb/include/gb/bus.h`
 - [ ] `.\gb\build.cmd -Test` and record the per-milestone counts in `NOTES.md`
-- [ ] Open `lessons/M00-setup-and-harness.md` and finish its work order
-- [ ] Start `lessons/M01-cartridge-and-bus.md`
+- [ ] Work `LESSONS.md` -> `lessons/L01-the-feedback-loop.md` (90 min, self-contained, ends green)
+- [ ] Then `lessons/L02-read-a-real-cartridge.md`
 
 ---
 
@@ -82,7 +84,7 @@ Tests: `m02_nop_advances_pc`, `m02_step_cycles_nop`, `m02_ld_r_d8`, `m02_ld_rr_d
 ## M03 — 8-bit load matrix, ALU, flags, DAA
 
 Tests: `m03_ld_r_r_matrix`, `m03_alu_add_flags`, `m03_alu_sub_flags`,
-`m03_alu_adc_sbc_flags`, `m03_alu_logic_flags`, `m03_alu_cp_no_write`,
+`m03_alu_adc_flags` / `m03_alu_sbc_flags`, `m03_alu_logic_flags`, `m03_alu_cp_no_write`,
 `m03_inc_dec_flags`, `m03_daa`, `m03_rotates_a`, `m03_hl_indirect_cycles`
 
 - [ ] Read `docs/02-cpu.md` §2.4 in full. Twice. The `H` and `C` rules are the milestone.

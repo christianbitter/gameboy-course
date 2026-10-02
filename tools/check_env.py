@@ -114,7 +114,7 @@ def main():
         "winget install Gyan.FFmpeg")
 
     sdl = next((p for p in SDL2_HINTS if os.path.exists(p)), None)
-    add(False, "SDL2 (optional, M11)", bool(sdl),
+    add(False, "SDL2 (optional, L34)", bool(sdl),
         sdl or "not installed - needed only for the windowed front end",
         r'pacman -S mingw-w64-ucrt-x86_64-SDL2   (UCRT64, to match your gcc)')
 

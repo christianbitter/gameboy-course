@@ -31,6 +31,15 @@ typedef struct {
     bool stat_line;     /* previous value of the OR of enabled STAT sources,
                            used to request an interrupt on a rising edge   */
 
+    /* CGB only (optional stretch, L36). Palette RAM: 64 bytes per kind, which is
+     * 8 palettes x 4 colours x 2 bytes of little-endian 15-bit BGR555. BCPS and
+     * OCPS carry the index in bits 0-5 and the auto-increment flag in bit 7; BCPD
+     * and OCPD are the data ports. On a DMG these bytes are unused. */
+    u8 cgb_bg_ram[64];      /* FF69 (BCPD) writes here */
+    u8 cgb_obj_ram[64];     /* FF6B (OCPD) writes here */
+    u8 bcps;                /* FF68 */
+    u8 ocps;                /* FF6A */
+
     /* The picture. Values 0..3 are shade indices, already passed through the
      * palette by the renderer; the host converts them to RGB. */
     u8   framebuffer[GB_FB_SIZE];
